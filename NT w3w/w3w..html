@@ -1,13 +1,37 @@
 <div id="map"></div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const words = urlParams.get('words');
-    console.log(words)
-    // Create the Google Map
+  const urlParams = new URLSearchParams(window.location.search);
+  const words = urlParams.get('words');
+  const wordsTest ='bravo.newest.minds';
+  console.log(words);
+  var target = '';
+
+  what3words.api.convertToCoordinates(words).then(function(response) {
+    target = {
+        'lat': response.coordinates.lat,
+        'lng': response.coordinates.lng
+    };
+    console.log('[target1]', target);
+ });
+ console.log('[target2]', target);
+
+  // Create the Google Map
+  var myLatLng = {lat: -27.468460, lng: 153.030107};
+ 
+  console.log('[myLatLng]', myLatLng);
+  
   let map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 51.52086, lng: -0.195499 },
+    center: myLatLng,
     zoom: 19
+  });
+
+
+  
+  var marker = new google.maps.Marker({
+    position: myLatLng,
+    map: map,
+    title: 'Hello World!'
   });
 </script>
 <script>
