@@ -31,11 +31,50 @@
             streetViewControl: false,
             fullscreenControl: false
         });
+
+        var rectangle = new google.maps.Rectangle({
+            strokeColor: '#00aeef',
+            strokeOpacity: 1,
+            strokeWeight: .01,
+            fillColor: '#00aeef',
+            fillOpacity: .9,
+            map: map,
+            bounds: bounds
+        });
+
+        var marker = new google.maps.Marker({
+            position: target,
+            map: map,
+            visible: false
+        });
+
+        var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="header" class="info-window">' + wordsBreakLine + '</h1>'+
+            '</div>'+
+            '</div>';
+      
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString,
+          pixelOffset: {width: 0, height: -40}
+        });
+
+        console.log('[map]', map)
+        infowindow.close();
+        infowindow.open(map, marker);
+
+        rectangle.addListener('click', function() {
+            infowindow.close();
+            infowindow.open(map, marker);
+        });
+
      
         var gridData;
     
         // Add the what3words grid to the Google Map data layer once the desired zoom level is meet
         map.addListener('bounds_changed', function() {
+            console.log('pop');
             const zoom = map.getZoom();
             const loadFeatures = zoom > 17;
             if (loadFeatures) { // Zoom level is high enough
@@ -64,51 +103,14 @@
                         gridData = map.data.addGeoJson(data);
                     }).catch(console.error);
             }
-    
-            var rectangle = new google.maps.Rectangle({
-                strokeColor: '#00aeef',
-                strokeOpacity: 1,
-                strokeWeight: .01,
-                fillColor: '#00aeef',
-                fillOpacity: .9,
-                map: map,
-                bounds: bounds
-            });
 
-            var marker = new google.maps.Marker({
-                position: target,
-                map: map,
-                visible: false
-            });
-
-            var contentString = '<div id="content">'+
-                '<div id="siteNotice">'+
-                '</div>'+
-                '<h1 id="header" class="info-window">' + wordsBreakLine + '</h1>'+
-                '</div>'+
-                '</div>';
-          
-            var infowindow = new google.maps.InfoWindow({
-              content: contentString,
-              pixelOffset: {width: 0, height: -40}
-            });
-
-            console.log('[map]', map)
-            infowindow.close();
-            infowindow.open(map, marker);
-  
-            rectangle.addListener('click', function() {
-                infowindow.close();
-                infowindow.open(map, marker);
-            });
-
-            // Set the grid display style
-            map.data.setStyle({
-                visible: loadFeatures,
-                strokeColor: '#000',
-                strokeWeight: .2,
-                clickable: false
-            });
+        // Set the grid display style
+        map.data.setStyle({
+            visible: loadFeatures,
+            strokeColor: '#000',
+            strokeWeight: .2,
+            clickable: false
+        });
         });
     });
 </script>
