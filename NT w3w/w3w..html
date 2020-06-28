@@ -3,7 +3,7 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const words = urlParams.get('words');
-    const wordsTest = 'bravo.newest.minds';
+    const wordsBreakLine = words.split('.').join('</br>')
     var target = '';
     var bounds = {};
     
@@ -12,7 +12,6 @@
             'lat': response.coordinates.lat,
             'lng': response.coordinates.lng,
         };
-        console.log('[lng]', target.lng);
         
         var north = target.lat + .000014;
         var south = target.lat - .0000135;
@@ -28,7 +27,9 @@
         let map = new google.maps.Map(document.getElementById("map"), {
             center: target,
             zoom: 20,
-            mapTypeId: 'satellite'
+            mapTypeId: 'satellite',
+            streetViewControl: false,
+            fullscreenControl: false
         });
      
         var gridData;
@@ -74,6 +75,33 @@
                 bounds: bounds
             });
 
+            var marker = new google.maps.Marker({
+                position: target,
+                map: map,
+                visible: false
+            });
+
+            var contentString = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="header" class="info-window">' + wordsBreakLine + '</h1>'+
+                '</div>'+
+                '</div>';
+          
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString,
+              pixelOffset: {width: 0, height: -40}
+            });
+
+            console.log('[map]', map)
+            infowindow.close();
+            infowindow.open(map, marker);
+  
+            rectangle.addListener('click', function() {
+                infowindow.close();
+                infowindow.open(map, marker);
+            });
+
             // Set the grid display style
             map.data.setStyle({
                 visible: loadFeatures,
@@ -85,13 +113,24 @@
     });
 </script>
 <style>
-  #map {
-    height: 900px;
-  }
+    #map {
+        height: 900px;
+    }
 
-  html, body {
-    height: 900px;
-    margin: 0;
-    padding: 0;
-  }
+    .gm-style-iw {
+        max-width: 75vw !important;
+    }
+
+    #header {
+        color: #212331;
+        margin: 0;
+        word-break: break-all;
+        line-height: 1;
+    }
+
+    html, body {
+        height: 900px;
+        margin: 0;
+        padding: 0;
+    }
 </style>
