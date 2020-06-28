@@ -1,0 +1,34 @@
+<script>
+    var bounds = 
+    var rectangle = new google.maps.Rectangle({
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        map: map,
+        bounds: {
+          north: 88.789799,
+          south: 88.789769,
+          east: 26.514176,
+          west: 26.514149
+        }
+      });
+  </script>
+
+
+  var bounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(lat, lng),
+    new google.maps.LatLng(lat + 1.5, lng + 4.0)
+ )
+
+ var north = response.square.northeast.lng;
+ var east = response.square.northeast.lat;
+ var south = response.square.southwest.lng;
+ var west = response.square.southwest.lat;
+ bounds = {
+     north: north,
+     south: south,
+     east: east,
+     west: west
+ }

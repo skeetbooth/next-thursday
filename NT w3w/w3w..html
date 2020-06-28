@@ -1,81 +1,88 @@
 <div id="map"></div>
 
 <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const words = urlParams.get('words');
-  const wordsTest ='bravo.newest.minds';
-  console.log(words);
-  var target = '';
-
-  what3words.api.convertToCoordinates(words).then(function(response) {
-    target = {
-        'lat': response.coordinates.lat,
-        'lng': response.coordinates.lng
-    };
-    console.log('[target1]', target);
- });
- console.log('[target2]', target);
-
-  // Create the Google Map
-  var myLatLng = {lat: -27.468460, lng: 153.030107};
- 
-  console.log('[myLatLng]', myLatLng);
-  
-  let map = new google.maps.Map(document.getElementById("map"), {
-    center: myLatLng,
-    zoom: 19
-  });
-
-
-  
-  var marker = new google.maps.Marker({
-    position: myLatLng,
-    map: map,
-    title: 'Hello World!'
-  });
-</script>
-<script>
-  var gridData;
-
-  // Add the what3words grid to the Google Map data layer once the desired zoom level is meet
-  map.addListener('bounds_changed', function() {
-    const zoom = map.getZoom();
-    const loadFeatures = zoom > 17;
-    console.log(zoom);
-    if (loadFeatures) { // Zoom level is high enough
+    const urlParams = new URLSearchParams(window.location.search);
+    const words = urlParams.get('words');
+    const wordsTest = 'bravo.newest.minds';
+    var target = '';
+    var bounds = {};
     
-      var ne = map.getBounds().getNorthEast();
-      var sw = map.getBounds().getSouthWest();
-      console.log(ne)
-      console.log(sw)
-
-      // Call the what3words Grid API to obtain the grid squares within the current visble bounding box
-      what3words.api
-        .gridSectionGeoJson({
-          southwest: {
-            lat: sw.lat(), lng: sw.lng()
-          },
-          northeast: {
-            lat: ne.lat(), lng: ne.lng()
-          }
-        }).then(function(data) {
-          if (gridData !== undefined) {
-            for (var i = 0; i < gridData.length; i++) {
-                map.data.remove(gridData[i]);
+    what3words.api.convertToCoordinates(words).then(function(response) {
+        target = {
+            'lat': response.coordinates.lat,
+            'lng': response.coordinates.lng,
+        };
+        console.log('[lng]', target.lng);
+        
+        var north = target.lat + .000014;
+        var south = target.lat - .0000135;
+        var east = target.lng + .000015;
+        var west = target.lng - .000015;
+        bounds = {
+            north: north,
+            south: south,
+            east: east,
+            west: west
+        }
+    
+        let map = new google.maps.Map(document.getElementById("map"), {
+            center: target,
+            zoom: 20,
+            mapTypeId: 'satellite'
+        });
+     
+        var gridData;
+    
+        // Add the what3words grid to the Google Map data layer once the desired zoom level is meet
+        map.addListener('bounds_changed', function() {
+            const zoom = map.getZoom();
+            const loadFeatures = zoom > 17;
+            if (loadFeatures) { // Zoom level is high enough
+    
+                var ne = map.getBounds().getNorthEast();
+                var sw = map.getBounds().getSouthWest();
+    
+    
+                // Call the what3words Grid API to obtain the grid squares within the current visble bounding box
+                what3words.api
+                    .gridSectionGeoJson({
+                        southwest: {
+                            lat: sw.lat(),
+                            lng: sw.lng()
+                        },
+                        northeast: {
+                            lat: ne.lat(),
+                            lng: ne.lng()
+                        }
+                    }).then(function(data) {
+                        if (gridData !== undefined) {
+                            for (var i = 0; i < gridData.length; i++) {
+                                map.data.remove(gridData[i]);
+                            }
+                        }
+                        gridData = map.data.addGeoJson(data);
+                    }).catch(console.error);
             }
-          }
-          gridData = map.data.addGeoJson(data);
-        }).catch(console.error);
-    }
+    
+            var rectangle = new google.maps.Rectangle({
+                strokeColor: '#00aeef',
+                strokeOpacity: 1,
+                strokeWeight: .01,
+                fillColor: '#00aeef',
+                fillOpacity: .9,
+                map: map,
+                bounds: bounds
+            });
 
-    // Set the grid display style
-    map.data.setStyle({
-      visible: loadFeatures,
-      strokeColor: '#777',
-      strokeWeight: 0.5,
-      clickable: false
+            // Set the grid display style
+            map.data.setStyle({
+                visible: loadFeatures,
+                strokeColor: '#000',
+                strokeWeight: .2,
+                clickable: false
+            });
+        });
     });
-  });
 </script>
 <style>
   #map {
@@ -88,5 +95,3 @@
     padding: 0;
   }
 </style>
-
-

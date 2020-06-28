@@ -1,0 +1,14 @@
+
+  <script>
+    let map = new google.maps.Map(document.getElementById("map"), {
+        center: target,
+        zoom: 19,
+        mapTypeId: 'hybrid'
+      });
+    
+      var marker = new google.maps.Marker({
+        position: target,
+        map: map,
+        title: 'Hello World!'
+      });
+  </script>
