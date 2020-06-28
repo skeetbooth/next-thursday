@@ -77,9 +77,9 @@
       map.addListener('bounds_changed', function() {
         const zoom = map.getZoom();
         const loadFeatures = zoom > 17;
-        if (loadFeatures) { // Zoom level is high enough
-          var ne = map.getBounds().getNorthEast();
-          var sw = map.getBounds().getSouthWest();
+        if (loadFeatures) {
+          const ne = map.getBounds().getNorthEast();
+          const sw = map.getBounds().getSouthWest();
     
           // Call the what3words Grid API to obtain the grid squares within the current visble bounding box
           what3words.api
@@ -94,7 +94,7 @@
               }
             }).then(function(data) {
               if (gridData !== undefined) {
-                for (var i = 0; i < gridData.length; i++) {
+                for (let i = 0; i < gridData.length; i++) {
                   map.data.remove(gridData[i]);
                 }
               }
