@@ -1,10 +1,24 @@
+<div id="message">
+    <p>See you at our old address on Thursday, 16th July @ 236 Arthur St, Newstead</p>
+    <p>Click <a href="https://what3words.com/" id="cta-link" target="_blank">here</a> to use your unique three words to navigate to our brand spanking new address.</p>
+</div>
+
 <div id="map"></div>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const words = urlParams.get('words');
+    const wordsOutput = document.getElementById('cta-link')
     const wordsBreakLine = words.split('.').join('</br>')
-    let target = '';
-    let bounds = {};
+    const ctaLink = document.getElementById('cta-link')
+    const message = document.getElementById('message')
+    let target = ''
+    let bounds = {}
+    
+    console.log('message: ', message)
+   
+
+    ctaLink.href = 'https://what3words.com/' + words
+    wordsOutput.href = 'https://what3words.com/' + words;
     
     what3words.api.convertToCoordinates(words).then(function(response) {
       target = {
@@ -12,10 +26,10 @@
         'lng': response.coordinates.lng,
       };
     
-      const north = target.lat + .000014;
-      const south = target.lat - .0000135;
-      const east = target.lng + .000015;
-      const west = target.lng - .000015;
+      const north = target.lat + .000014
+      const south = target.lat - .0000135
+      const east = target.lng + .000015
+      const west = target.lng - .000015
       bounds = {
         north: north,
         south: south,
@@ -52,7 +66,7 @@
         '</div>' +
         '<h1 id="header" class="info-window">' + wordsBreakLine + '</h1>' +
         '</div>' +
-        '</div>';
+        '</div>'
     
       const infowindow = new google.maps.InfoWindow({
         content: contentString,
@@ -62,24 +76,23 @@
         }
       });
     
-      console.log('[map]', map)
       infowindow.close();
       infowindow.open(map, marker);
     
       rectangle.addListener('click', function() {
-        infowindow.close();
-        infowindow.open(map, marker);
+        infowindow.close()
+        infowindow.open(map, marker)
       });
     
       let gridData;
     
       // Add the what3words grid to the Google Map data layer once the desired zoom level is meet
       map.addListener('bounds_changed', function() {
-        const zoom = map.getZoom();
+        const zoom = map.getZoom()
         const loadFeatures = zoom > 17;
         if (loadFeatures) {
-          const ne = map.getBounds().getNorthEast();
-          const sw = map.getBounds().getSouthWest();
+          const ne = map.getBounds().getNorthEast()
+          const sw = map.getBounds().getSouthWest()
     
           // Call the what3words Grid API to obtain the grid squares within the current visble bounding box
           what3words.api
@@ -95,34 +108,58 @@
             }).then(function(data) {
               if (gridData !== undefined) {
                 for (let i = 0; i < gridData.length; i++) {
-                  map.data.remove(gridData[i]);
+                  map.data.remove(gridData[i])
                 }
               }
               gridData = map.data.addGeoJson(data);
-            }).catch(console.error);
+            }).catch(console.error)
+
         }
-    
+
         // Set the grid display style
         map.data.setStyle({
           visible: loadFeatures,
           strokeColor: '#000',
           strokeWeight: .2,
           clickable: false
-        });
-      });
-    });
+        })
+      })
+    }).catch(function (error) {
+        console.log('error: ', error)
+        message.innerHTML = "Not a valid what3words address"
+        map.classList.add('hidden')
+        return null;
+    })
 </script>
 <style>
     #map {
         height: 900px;
+        margin-bottom: 4rem;
     }
 
+    .hidden {
+        display: none;
+    }
+    
     .gm-style-iw {
         max-width: 75vw !important;
     }
+    
+    .gm-style-iw-d {
+        overflow: hidden !important;
+        padding: 1px 10px 10px 1px !important;
+    }
+    
+    #words {
+       font-weight: bold;
+    }
+   
+    #message {
+       margin: 4rem 0;
+    }
 
     #header {
-        color: #212331;
+        color: #00aeef;
         margin: 0;
         word-break: break-all;
         line-height: 1;
