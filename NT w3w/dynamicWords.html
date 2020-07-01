@@ -1,0 +1,34 @@
+<div class ="dynamic-test-wrapper">
+    <p>See you at our old address, <strong>6pm on Thursday 16th July @ 236 Arthur St, Newstead.</strong></p>
+    <p>Here are your unique three words again. Input them in the search bar below (including the fullstops without spaces) and we’ll navigate you to our brand-spanking new address.</p>
+    <h2 id="words-output" class="elementor-heading-title elementor-size-default"></h2>
+</div>
+
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search)
+    const words = urlParams.get('words').toUpperCase()
+    const wordsOutput = document.getElementById('words-output')
+    wordsOutput.innerHTML = words
+</script>
+<style>
+    .dynamic-test-wrapper {
+        background-color: #00aeef;
+        color: #fff;
+        max-width: 916px;
+        margin: auto;
+        margin: 4rem auto;
+    }
+
+    .elementor-widget-container {
+        max-width: initial;
+    }
+
+    .elementor-element-ba8faa2 {
+        background-color: #00aeef;
+    }
+
+    #words-output {
+        color: #fff;
+    }
+</style>

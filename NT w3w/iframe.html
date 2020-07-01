@@ -1,0 +1,11 @@
+<iframe id="iframe" src="" style="height:1000px; width:100%;"></iframe>
+<script>
+    const urlParams = new URLSearchParams(window.location.search)
+    const words = urlParams.get('words')
+    console.log('[words]', words)
+    const wordsOutput = document.getElementById('cta-link')
+    const wordsBreakLine = words.split('.').join('</br>')
+    const iframe = document.getElementById('iframe')
+    iframe.src = 'https://what3words.com/' + words;
+</script>
+  
